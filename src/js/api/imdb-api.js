@@ -116,7 +116,7 @@ searchFormEl.addEventListener('submit', onSearchMovies);
 async function onSearchMovies (e) {
   e.preventDefault();
   try {
-    const param = `${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}&query=${searchInputEl.value.trim()}&language=en-US&include_adult=false`;
+    const param = `${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}&query=${searchInputEl.value.trim()}&language=en-US&page=${currentPage}&include_adult=false`;
     console.log(`Search: ${param}`);
     const trendingMoviesData = await fetchTrendingMovies(param);
     totalPages = trendingMoviesData.total_pages;
