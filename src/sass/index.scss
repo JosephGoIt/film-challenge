@@ -1,0 +1,12 @@
+@import './common';
+
+@import './utils/variables';
+@import './utils/breakpoints';
+@import './utils/global';
+
+@import './layout/header';
+@import './layout/movie-section';
+@import './layout/modal-movie-card';
+@import './layout/scroll-to-top';
+@import './layout/footer';
+@import './layout/pagination';
