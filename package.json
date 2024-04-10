@@ -2,20 +2,20 @@
   "name": "parcel-project-template",
   "version": "2.0.0",
   "description": "",
-  "homepage": "https://JosephGoIt.github.io/test-film",
+  "homepage": "https://JosephGoIt.github.io/film-challenge",
   "scripts": {
     "start": "parcel src/*.html",
-    "build": "parcel build src/*.html --public-url /test-film/"
+    "build": "parcel build src/*.html --public-url /film-challenge/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JosephGoIt/test-film.git"
+    "url": "git+https://github.com/JosephGoIt/film-challenge.git"
   },
   "keywords": [],
   "author": "Joseph Camacho <spongkj@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/JosephGoIt/test-film/issues"
+    "url": "https://github.com/JosephGoIt/film-challenge/issues"
   },
   "dependencies": {
     "aos": "^3.0.0-beta.6",
