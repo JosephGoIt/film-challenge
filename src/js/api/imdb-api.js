@@ -26,14 +26,16 @@ const genres = [
     { "id": 10752, "name": "War" },
     { "id": 37, "name": "Western" }
 ];
+const searchInputEl = document.querySelector('input[name="searchQuery"]');
+const searchFormEl = document.getElementById('search-form');
 const galleryEl = document.querySelector(".gallery_fetch-box");
 let currentPage = 1;
 let totalPages = 0;
 
 // Function to fetch trending movies
-async function fetchTrendingMovies () {
+async function fetchTrendingMovies (arg) {
   try {
-    const response = await axios.get(`${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}`);
+    const response = await axios.get(arg);
     if (response.status !== 200) {
       throw new Error("Failed to fetch movies.");
     }
@@ -47,7 +49,8 @@ async function fetchTrendingMovies () {
 // Main function to fetch movies, create gallery items, render gallery,
 const main = async () => {
   try {
-    const trendingMoviesData = await fetchTrendingMovies();
+    const param = `${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}`;
+    const trendingMoviesData = await fetchTrendingMovies(param);
     totalPages = trendingMoviesData.total_pages;
     console.log(totalPages);
     // const {poster_path, title, genre_ids, release_date, id, vote_average, vote_count, popularity,original_title, overview, status} = trendingMoviesData;
@@ -107,5 +110,28 @@ async function loadMore() {
     // Handle error
   }
 }
+
+searchFormEl.addEventListener('submit', onSearchMovies);
+
+async function onSearchMovies (e) {
+  e.preventDefault();
+  try {
+    const param = `${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}&query=${searchInputEl.value.trim()}&language=en-US&include_adult=false`;
+    console.log(`Search: ${param}`);
+    const trendingMoviesData = await fetchTrendingMovies(param);
+    totalPages = trendingMoviesData.total_pages;
+    console.log(`Search: ${totalPages}`);
+    // const {poster_path, title, genre_ids, release_date, id, vote_average, vote_count, popularity,original_title, overview, status} = trendingMoviesData;
+    console.log(`Search: ${trendingMoviesData}`);
+    // Call rederGallery
+    renderGallery(trendingMoviesData, totalPages);
+
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+
 
 main();
