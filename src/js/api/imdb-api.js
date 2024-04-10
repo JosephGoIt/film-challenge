@@ -89,7 +89,6 @@ function renderPagination(totalHits) {
   pagination.innerHTML = '';
   console.log(totalHits);
   // const totalPages = Math.ceil(totalHits / options.params.per_page);
-
   for (let i = 1; i <= totalPages; i++) {
       const pageButton = document.createElement('button');
       pageButton.textContent = i;
@@ -131,8 +130,5 @@ async function onSearchMovies (e) {
     console.error(error);
   }
 };
-
-
-
 
 main();
