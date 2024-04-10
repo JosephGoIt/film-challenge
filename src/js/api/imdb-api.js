@@ -67,6 +67,7 @@ const main = async () => {
 function renderGallery(data, totalHits) {
   const hits = data.results; // Assuming the movies are nested within a property named "results"
   const markup = hits.map(generatePhotoCard).join('');
+  galleryEl.innerHTML = '';
   galleryEl.insertAdjacentHTML('beforeend', markup);
   if (currentPage >= totalHits) {
       Notify.info("You have reached the end of the results.");
@@ -117,10 +118,9 @@ async function onSearchMovies (e) {
   e.preventDefault();
   currentPage = 1; // Reset currentPage to 1 when searching
   try {
-    let query1 = searchInputEl.value;
-    console.log(query1);
-    //const param = `${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}&query=${searchInputEl.value}&language=en-US&page=${currentPage}&include_adult=false`;
-    const param = `${IMDB_URL}/3/search/movie?api_key=${IMDB_API_KEY}&query=${query1}&language=en-US&page=${currentPage}&include_adult=false`
+    let query = searchInputEl.value;
+    console.log(query);
+    const param = `${IMDB_URL}/3/search/movie?api_key=${IMDB_API_KEY}&query=${query}&language=en-US&page=${currentPage}&include_adult=false`;
     console.log(`Search: ${param}`);
     const trendingMoviesData = await fetchTrendingMovies(param);
     totalPages = trendingMoviesData.total_pages;
