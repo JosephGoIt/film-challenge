@@ -170,6 +170,7 @@ async function onSearchPaginationClick({ target }) {
   let page = optionsIMDB.specs.page;
 
   try {
+    console.log(`query`)
     const res = await axios.get(
       `${BASE_URL}/3/search/movie?api_key=${API_KEY}&query=${query}&language=en-US&page=${page}&include_adult=false`
     );
