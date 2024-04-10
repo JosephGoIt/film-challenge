@@ -1,20 +1,8 @@
-const IMDB_API_KEY = `15150ce69b4b8fc4394b6dfaa88a912b`;
-const IMDB_URL = `https://api.themoviedb.org`;
 import axios from 'axios';
 
 // API URL and KEY
-export const optionsIMDB = {
-  specs: {
-    trendingMovie: '/3/trending/movie/day',
-    searchMovie: '/3/search/movie',
-    movieDetails: `/3/movie/`,
-    key: IMDB_API_KEY,
-    baseURL: IMDB_URL,
-    page: 1,
-    query: '',
-    totalPages: 1,
-  },
-};
+const IMDB_API_KEY = '9d52264b8376313698d7d20c165a8537';
+const IMDB_URL = 'https://api.themoviedb.org';
 
 // Genres
 const genres = [
@@ -37,59 +25,87 @@ const genres = [
     { "id": 53, "name": "Thriller" },
     { "id": 10752, "name": "War" },
     { "id": 37, "name": "Western" }
-  ];
+];
+const galleryEl = document.querySelector(".gallery_fetch-box");
+let currentPage = 1;
+let totalPages = 0;
 
 // Function to fetch trending movies
-const fetchTrendingMovies = async (arg1, arg2) => {
+async function fetchTrendingMovies () {
   try {
-    const response = await axios.get(arg1);
-    if (!response.ok) {
+    const response = await axios.get(`${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}`);
+    if (response.status !== 200) {
       throw new Error("Failed to fetch movies.");
     }
-    return await response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
     return []; // Return an empty array
   }
-};
+}
 
 // Main function to fetch movies, create gallery items, render gallery,
 const main = async () => {
-  //API URL and KEYS for trending movies
-  const token = `${BASE_URL}${optionsIMDB.trendingMovie}?api_key=${API_KEY}`;
-  console.log(token);
-  const trendingMoviesData = await fetchTrendingMovies(token, "");
-  console.log(trendingMoviesData);
-  createGalleryItems(trendingMoviesData);
+  try {
+    const trendingMoviesData = await fetchTrendingMovies();
+    totalPages = trendingMoviesData.total_pages;
+    console.log(totalPages);
+    // const {poster_path, title, genre_ids, release_date, id, vote_average, vote_count, popularity,original_title, overview, status} = trendingMoviesData;
+    console.log(trendingMoviesData);
+    // Call rederGallery
+    renderGallery(trendingMoviesData, totalPages);
+
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-// Function to create gallery items from fetched data
-const createGalleryItems = (data) => {
-  const markup = data;
-    data.results.map(item => {
-      const {poster_path, title, genre_ids, release_date, id, vote_average, vote_count, popularity,
-             original_title, overview, status} = item;
-      const date = new Date(release_date).getFullYear();
-      const genre = genre_ids[0];
-      const galleryItem = document.createElement(".gallery_fetch-box");
-      galleryItem.classList.add('gallery__item');
-      if (poster_path) {
-        return `
-            <div class="card" id="${id}">
-                <img class="card_img" src="https://image.tmdb.org/t/p/w400${poster_path}" alt="${title}" />
-                <p class="card_title"> ${title} <br />
-                    <span class="card_text">${genre} | ${date}</span>
-                </p>
-            </div>`;
-      }
-      return `
-            <div class="card" id="${id}">
-                <img class="card__img"  src="${img}" alt="${title}" />
-                <p class="card__titel"> ${title} <br />
-                    <span class="card__text">${genre} | ${date}</span>
-                </p>
-            </div>`;
-    })
-    .join('');
-  galleryItem.insertAdjacentHTML('beforeend', markup);
-};
+// Render gallery and pagination
+function renderGallery(data, totalHits) {
+  const hits = data.results; // Assuming the movies are nested within a property named "results"
+  const markup = hits.map(generatePhotoCard).join('');
+  galleryEl.insertAdjacentHTML('beforeend', markup);
+  if (currentPage >= totalHits) {
+      Notify.info("You have reached the end of the results.");
+  }
+  renderPagination(totalHits);
+  // lightbox.refresh();
+}
+function generatePhotoCard({poster_path, title, genre_ids, release_date, id, vote_average, vote_count, popularity,original_title, overview, status}) {
+  return `<div class="card" id="${id}">
+                   <img class="card_img" src="https://image.tmdb.org/t/p/w400${poster_path}" alt="${title}" />
+                   <p class="card_title"> ${title} <br />
+                       <span class="card_text">${genre_ids} | ${release_date}</span>
+                   </p>
+              </div>`;
+}
+
+function renderPagination(totalHits) {
+  const pagination = document.getElementById('pagination');
+  pagination.innerHTML = '';
+  console.log(totalHits);
+  // const totalPages = Math.ceil(totalHits / options.params.per_page);
+
+  for (let i = 1; i <= totalPages; i++) {
+      const pageButton = document.createElement('button');
+      pageButton.textContent = i;
+      pageButton.addEventListener('click', () => {
+          currentPage = i;
+          loadMore();
+      });
+      pagination.appendChild(pageButton);
+  }
+}
+
+async function loadMore() {
+  try {
+    const res = await axios.get(`${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}&page=${currentPage}`);
+    const hits = res.data.results;
+    renderGallery(hits, res.data.total_results);
+  } catch (err) {
+    console.error(err);
+    // Handle error
+  }
+}
+
+main();
