@@ -187,4 +187,12 @@ function renderFilmDetailsFromLocalStorage(status) {
   galleryEl.innerHTML = markup;
 }
 
-queued.addEventListener('click', renderFilmDetailsFromLocalStorage('queued'));
+queued.addEventListener('click', () => {
+  console.log("calling queue");
+  renderFilmDetailsFromLocalStorage('queued');
+});
+  
+watched.addEventListener('click', () => {
+  console.log("calling watched");
+  renderFilmDetailsFromLocalStorage('watched');
+});
