@@ -6,18 +6,19 @@
                     <use href="./images/icon/symbol-defs.svg#icon-logo"></use>
                 </svg>
                 <span class="logo-text">Filmoteka </span>
-            </a
-        >   <ul class="nav-list">
+            </a>
+            <ul class="nav-list">
                 <li class="nav-list-item">
                     <a href="./index.html" class="nav-list-link current">Home</a>
                 </li>
                 <li class="nav-list-item">
-                    <a href="./my-library.html" class="nav-list-link">my library</a>
+                    <a href="#" class="nav-list-link lib">my library</a>
                 </li>
             </ul>
         </nav>
     </div>
 </header>
+
 <section class="hero">
     <form class="search-form" id="search-form">
         <div class="input-field">
@@ -29,4 +30,15 @@
             </button>
         </div>
     </form>
+</section>
+
+<section class="library-hero hidden">
+    <ul class="library-list">
+        <li class="library-item">
+            <button type="button" class="watched-btn library-button" data-status="watched">Watched</button>
+        </li>
+        <li class="library-item">
+            <button type="button" class="queue-btn library-button" data-status="queue">queue</button>
+        </li>
+    </ul>
 </section>

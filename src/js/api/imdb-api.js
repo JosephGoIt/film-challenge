@@ -30,12 +30,14 @@ const searchInputEl = document.querySelector('input[name="searchQuery"]');
 const searchFormEl = document.getElementById('search-form');
 // const galleryBox = document.querySelector('.gallery-fetch_container');
 const galleryEl = document.querySelector(".gallery_fetch-box");
+const watched = document.querySelector('.watched-btn');
+const queued = document.querySelector ('.queue-btn');
 const pagination = document.getElementById('pagination');
 let currentPage = 1;
 let totalPages = 0;
 let functionCaller = 0; // to track which function initiated the call
 let param = "";
-let query = ""
+let query = "";
 
 // Function to fetch movies from the movie database
 async function fetchTrendingMovies (arg) {
@@ -139,4 +141,50 @@ async function onSearchMovies (e) {
   }
 };
 
+function findGenresOfMovie(ids) {
+  const arr = ids.flatMap(id => genres.filter(element => element.id === id));
+  const movieGenres = arr.map(el => el.name);
+  if (movieGenres.length > 2) {
+    const removedGenres = movieGenres.splice(0, 2);
+    removedGenres.push('Other');
+
+    return removedGenres.join(', ');
+  }
+  return movieGenres.join(', ');
+}
+
 main();
+
+document.addEventListener('DOMContentLoaded', function() {
+  const libLink = document.querySelector('.lib');
+  const heroSection = document.querySelector('.hero');
+  const libraryHeroSection = document.querySelector('.library-hero');
+
+  libLink.addEventListener('click', function(event) {
+      event.preventDefault();
+      heroSection.classList.toggle('hidden');
+      libraryHeroSection.classList.toggle('hidden');
+      renderFilmDetailsFromLocalStorage('watched');
+  });
+});
+
+function renderFilmDetailsFromLocalStorage(status) {
+  const filmDetails = JSON.parse(localStorage.getItem('filmDetails')) || {};
+  console.log(filmDetails);
+  const data = Object.values(filmDetails).filter(film => film.status === status);
+  console.log(data);
+  const markup = data.map(film => {
+      return `
+          <div class="card" id="${film.id}">
+              <img class="card_img" src="https://image.tmdb.org/t/p/w400${film.poster_path}" alt="${film.title}" />
+              <p class="card_title">${film.title} <br />
+                  <span class="card_text">${film.genre_ids} | ${film.release_date}</span>
+              </p>
+          </div>
+      `;
+  }).join('');
+
+  galleryEl.innerHTML = markup;
+}
+
+queued.addEventListener('click', renderFilmDetailsFromLocalStorage('queued'));

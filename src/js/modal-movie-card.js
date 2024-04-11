@@ -8,20 +8,21 @@ const IMAGE_PATH_W780 = "https://image.tmdb.org/t/p/w780";
 
 const refs = {
   galleryBox: document.querySelector('.gallery-fetch_container'),
-  galleryBox1: document.querySelector('.gallery-search_container'),
   filmModal: document.querySelector('[data-modal]'),
   body: document.querySelector('body'),
+  // lib: document.querySelector('.lib'),
+  // watchd: document.querySelector('.watched-btn'),
+  // queued: document.querySelector ('.queue-btn')
 };
 
 refs.galleryBox.addEventListener('click', onGalleryBoxClick);
-refs.galleryBox1.addEventListener('click', onGalleryBoxClick);
+// refs.galleryBox1.addEventListener('click', onGalleryBoxClick);
 
 async function onGalleryBoxClick(event) {
   event.preventDefault();
 
   // Check if the filmId is found in local storage
   const filmId = Number(event.target.closest('.card').id);
-  console.log(filmId);
   let status = '';
   const storedFilmDetails = JSON.parse(localStorage.getItem('filmDetails')) || {};
   if (storedFilmDetails[filmId]) {
