@@ -28,11 +28,16 @@ const genres = [
 ];
 const searchInputEl = document.querySelector('input[name="searchQuery"]');
 const searchFormEl = document.getElementById('search-form');
+// const galleryBox = document.querySelector('.gallery-fetch_container');
 const galleryEl = document.querySelector(".gallery_fetch-box");
+const pagination = document.getElementById('pagination');
 let currentPage = 1;
 let totalPages = 0;
+let functionCaller = 0; // to track which function initiated the call
+let param = "";
+let query = ""
 
-// Function to fetch trending movies
+// Function to fetch movies from the movie database
 async function fetchTrendingMovies (arg) {
   try {
     const response = await axios.get(arg);
@@ -46,33 +51,29 @@ async function fetchTrendingMovies (arg) {
   }
 }
 
-// Main function to fetch movies, create gallery items, render gallery,
+// Main function to fetch movies, if there is result will call render gallery,
 const main = async () => {
   try {
-    const param = `${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}`;
+    param = `${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}`;
     const trendingMoviesData = await fetchTrendingMovies(param);
-    totalPages = trendingMoviesData.total_pages;
-    console.log(totalPages);
-    // const {poster_path, title, genre_ids, release_date, id, vote_average, vote_count, popularity,original_title, overview, status} = trendingMoviesData;
-    console.log(trendingMoviesData);
+    totalPages = trendingMoviesData.total_pages; // this is to build pagination, how many pages
+    console.log(totalPages); // remove this as this is just for debugging
+    console.log(trendingMoviesData); // remove this as this is just for debugging
     // Call rederGallery
-    renderGallery(trendingMoviesData, totalPages);
-
+    renderGallery(trendingMoviesData);
   } catch (error) {
     console.error(error);
   }
 };
 
-// Render gallery and pagination
-function renderGallery(data, totalHits) {
+// Render gallery and and call pagination
+function renderGallery(data) {
   const hits = data.results; // Assuming the movies are nested within a property named "results"
+  // call generatePhotoCard
   const markup = hits.map(generatePhotoCard).join('');
   galleryEl.innerHTML = '';
   galleryEl.insertAdjacentHTML('beforeend', markup);
-  if (currentPage >= totalHits) {
-      Notify.info("You have reached the end of the results.");
-  }
-  renderPagination(totalHits);
+  renderPagination();
   // lightbox.refresh();
 }
 function generatePhotoCard({poster_path, title, genre_ids, release_date, id, vote_average, vote_count, popularity,original_title, overview, status}) {
@@ -84,16 +85,16 @@ function generatePhotoCard({poster_path, title, genre_ids, release_date, id, vot
               </div>`;
 }
 
-function renderPagination(totalHits) {
-  const pagination = document.getElementById('pagination');
+function renderPagination() {
   pagination.innerHTML = '';
-  console.log(totalHits);
+  console.log(`RenderPagination: ${totalPages}`); // remove this as this is for debugging
   // const totalPages = Math.ceil(totalHits / options.params.per_page);
   for (let i = 1; i <= totalPages; i++) {
       const pageButton = document.createElement('button');
       pageButton.textContent = i;
       pageButton.addEventListener('click', () => {
           currentPage = i;
+          // Call loadMore
           loadMore();
       });
       pagination.appendChild(pageButton);
@@ -102,11 +103,19 @@ function renderPagination(totalHits) {
 
 async function loadMore() {
   try {
-    const res = await axios.get(`${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}&page=${currentPage}`);
-    const hits = res.data.results;
-    renderGallery(hits, res.data.total_results);
+    // const res = await axios.get(`${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}&page=${currentPage}`);
+    if (functionCaller === 0) {
+      console.log(`Load more 1: ${functionCaller}`);
+      param = `${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}&page=${currentPage}`;
+    } else {
+      console.log(`Load more 2: ${functionCaller}`);
+      param = `${IMDB_URL}/3/search/movie?api_key=${IMDB_API_KEY}&query=${query}&language=en-US&page=${currentPage}&include_adult=false`;
+    }
+    console.log(`Load more3: ${param}, ${currentPage}`);
+    const data = await fetchTrendingMovies(param);
+    renderGallery(data);
   } catch (err) {
-    console.error(err);
+    console.log(err);
     // Handle error
   }
 }
@@ -115,13 +124,14 @@ searchFormEl.addEventListener('submit', onSearchMovies);
 
 async function onSearchMovies (e) {
   e.preventDefault();
+  functionCaller = 1;
   currentPage = 1; // Reset currentPage to 1 when searching
   try {
-    let query = searchInputEl.value;
+    query = searchInputEl.value;
     console.log(query);
-    const param = `${IMDB_URL}/3/search/movie?api_key=${IMDB_API_KEY}&query=${query}&language=en-US&page=${currentPage}&include_adult=false`;
+    param = `${IMDB_URL}/3/search/movie?api_key=${IMDB_API_KEY}&query=${query}&language=en-US&page=${currentPage}&include_adult=false`;
     console.log(`Search: ${param}`);
-    const trendingMoviesData = await fetchTrendingMovies(param);
+    const trendingMoviesData = await fetchTrendingMovies(param, currentPage);
     totalPages = trendingMoviesData.total_pages;
     console.log(`Search: ${totalPages}`);
     console.log(`Search Results:`, trendingMoviesData);
