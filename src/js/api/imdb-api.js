@@ -57,7 +57,6 @@ const main = async () => {
     param = `${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}`;
     const trendingMoviesData = await fetchTrendingMovies(param);
     totalPages = trendingMoviesData.total_pages; // this is to build pagination, how many pages
-    console.log(totalPages); // remove this as this is just for debugging
     console.log(trendingMoviesData); // remove this as this is just for debugging
     // Call rederGallery
     renderGallery(trendingMoviesData);
@@ -105,13 +104,13 @@ async function loadMore() {
   try {
     // const res = await axios.get(`${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}&page=${currentPage}`);
     if (functionCaller === 0) {
-      console.log(`Load more 1: ${functionCaller}`);
+      console.log(`Load more 0-general fetch: ${functionCaller}`); // remove as this is for debugging
       param = `${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}&page=${currentPage}`;
     } else {
-      console.log(`Load more 2: ${functionCaller}`);
+      console.log(`Load more 1-search fetch: ${functionCaller}`); // remove as this is for debugging
       param = `${IMDB_URL}/3/search/movie?api_key=${IMDB_API_KEY}&query=${query}&language=en-US&page=${currentPage}&include_adult=false`;
     }
-    console.log(`Load more3: ${param}, ${currentPage}`);
+    console.log(`Load more: ${param}, ${currentPage}`); // remove as this is for debugging
     const data = await fetchTrendingMovies(param);
     renderGallery(data);
   } catch (err) {
@@ -128,13 +127,12 @@ async function onSearchMovies (e) {
   currentPage = 1; // Reset currentPage to 1 when searching
   try {
     query = searchInputEl.value;
-    console.log(query);
     param = `${IMDB_URL}/3/search/movie?api_key=${IMDB_API_KEY}&query=${query}&language=en-US&page=${currentPage}&include_adult=false`;
-    console.log(`Search: ${param}`);
+    console.log(`Search: ${param}`); // remove as this is for debugging
     const trendingMoviesData = await fetchTrendingMovies(param, currentPage);
     totalPages = trendingMoviesData.total_pages;
-    console.log(`Search: ${totalPages}`);
-    console.log(`Search Results:`, trendingMoviesData);
+    console.log(`Search: ${totalPages}`); // remove as this is for debugging
+    console.log(`Search Results:`, trendingMoviesData); // remove as this is for debugging
     renderGallery(trendingMoviesData, totalPages);
   } catch (error) {
     console.error(error);
