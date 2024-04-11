@@ -21,6 +21,7 @@ async function onGalleryBoxClick(event) {
 
   // Check if the filmId is found in local storage
   const filmId = Number(event.target.closest('.card').id);
+  console.log(filmId);
   let status = '';
   const storedFilmDetails = JSON.parse(localStorage.getItem('filmDetails')) || {};
   if (storedFilmDetails[filmId]) {
