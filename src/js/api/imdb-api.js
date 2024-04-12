@@ -5,7 +5,7 @@ const IMDB_API_KEY = '9d52264b8376313698d7d20c165a8537';
 const IMDB_URL = 'https://api.themoviedb.org';
 
 // Genres
-const genres = [
+export const genres = [
     { "id": 28, "name": "Action" },
     { "id": 12, "name": "Adventure" },
     { "id": 16, "name": "Animation" },
@@ -136,6 +136,7 @@ async function fetchTrendingMovies() {
       const response = await axios.get(`${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}`);
       if (response.status === 200) {
           const trendingMoviesData = response.data;
+          console.log(trendingMoviesData);
           totalPages = trendingMoviesData.total_pages;
           renderGallery(trendingMoviesData);
       } else {
@@ -146,7 +147,7 @@ async function fetchTrendingMovies() {
   }
 }
 
-function findGenresOfMovie(ids) {
+export function findGenresOfMovie(ids) {
   try {
       if (!ids) return ""; // Return empty string if ids is undefined or null
       const movieGenres = ids.flatMap(id => genres.filter(element => element.id === id)).map(el => el.name);
