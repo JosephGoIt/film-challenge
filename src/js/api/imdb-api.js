@@ -162,12 +162,12 @@ function renderFilmDetailsFromLocalStorage(status) {
   try {
       const filmDetails = JSON.parse(localStorage.getItem('filmDetails')) || {};
       const data = Object.values(filmDetails).filter(film => film.status === status);
-      const markup = data.map(({ id, poster_path, title, genre_ids, release_date }) => {
-          const movieGenres = findGenresOfMovie(genre_ids);
+      const markup = data.map(({ id, poster_path, title, genres, release_date }) => {
+          const movieGenres = findGenresOfMovie(genres);
           return `<div class="card" id="${id}">
                       <img class="card_img" src="https://image.tmdb.org/t/p/w400${poster_path}" alt="${title}" />
                       <p class="card_title">${title} <br />
-                          <span class="card_text">${movieGenres} | ${release_date}</span>
+                          <span class="card_text">${genreNames(genres)} | ${release_date}</span>
                       </p>
                   </div>`;
       }).join('');
@@ -176,6 +176,19 @@ function renderFilmDetailsFromLocalStorage(status) {
   } catch (error) {
       console.error(error);
   }
+}
+
+function genreNames (genres) {
+    let genreNames = genres.map(genre => genre.name);
+
+if (genreNames.length > 2) {
+    const firstTwoGenres = genreNames.slice(0, 2).join(', ');
+    const remainingGenres = "Others";
+    genreNames = `${firstTwoGenres}, ${remainingGenres}`;
+} else {
+    genreNames = genreNames.join(', ');
+}
+return genreNames;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
