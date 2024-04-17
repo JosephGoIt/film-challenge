@@ -4,7 +4,7 @@
 
   padding: 40px 0px;
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 728px) {
     padding: 60px 0px;
   }
 }
@@ -54,3 +54,15 @@
 .pagination-btn + .pagination-btn {
   margin-left: 5px;
 }
+
+// #pagination {
+//   width: 300px; /* Adjust the width as needed */
+//   overflow-x: auto; /* Enable horizontal scrollbar if content overflows */
+//   white-space: nowrap; /* Prevent button wrapping */
+// }
+
+// #pagination button {
+//   width: 25px; /* Adjust the width of each button as needed */
+//   margin: 5px; /* Add some spacing between buttons */
+//   /* Add other styling for buttons as needed */
+// }

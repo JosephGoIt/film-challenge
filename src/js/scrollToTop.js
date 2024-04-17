@@ -21,3 +21,4 @@ function onWindowScroll() {
   }
   refs.scrollToTopEl.classList.add('scroll-to-top--hidden');
 }
+

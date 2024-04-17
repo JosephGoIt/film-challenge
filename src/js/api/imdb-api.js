@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { paginationFetch } from '../pagination';
 
 // API URL and KEY
 const IMDB_API_KEY = '9d52264b8376313698d7d20c165a8537';
@@ -72,15 +73,16 @@ function renderGallery(data) {
 
 function renderPagination() {
     pagination.innerHTML = '';
-    for (let i = 1; i <= totalPages; i++) {
-        const pageButton = document.createElement('button');
-        pageButton.textContent = i;
-        pageButton.addEventListener('click', () => {
-            currentPage = i;
-            loadMore();
-        });
-        pagination.appendChild(pageButton);
-    }
+    // for (let i = 1; i <= totalPages; i++) {
+    //     const pageButton = document.createElement('button');
+    //     pageButton.textContent = i;
+    //     pageButton.addEventListener('click', () => {
+    //         currentPage = i;
+    //         loadMore();
+    //     });
+    //     pagination.appendChild(pageButton);
+    // }
+    paginationFetch(currentPage, totalPages)
 }
 
 async function loadMore() {
