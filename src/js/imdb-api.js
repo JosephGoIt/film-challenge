@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { paginationFetch } from '../pagination';
+import { paginationFetch } from './pagination';
 
 // API URL and KEY
 const IMDB_API_KEY = '9d52264b8376313698d7d20c165a8537';

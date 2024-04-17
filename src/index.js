@@ -1,4 +1,4 @@
-import './js/api/imdb-api';
+import './js/imdb-api';
 import './js/modal-movie-card';
 import './js/pagination';
 // import './js/fetch-movies';
