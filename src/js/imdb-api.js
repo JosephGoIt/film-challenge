@@ -4,6 +4,7 @@ import { paginationFetch } from './pagination';
 // API URL and KEY
 const IMDB_API_KEY = '9d52264b8376313698d7d20c165a8537';
 const IMDB_URL = 'https://api.themoviedb.org';
+const MOVIES_PER_PAGE = 20;
 
 // Genres
 export const genres = [
@@ -37,9 +38,13 @@ const pagination = document.getElementById('pagination');
 
 let currentPage = 1;
 let totalPages = 0;
+let totalMovies = 0;
+let movies = [];
+let splittedMovieSet;
 let functionCaller = 0;
 let param = "";
 let query = "";
+let moviesOnPage = "";
 
 async function fetchMovies(url) {
     try {
@@ -78,10 +83,18 @@ function renderPagination() {
 
 async function loadMore() {
     try {
-        const url = functionCaller === 0 ?
+        let url = "";
+        let data = "";
+        if (functionCaller === 2) {
+            data = await renderFilmDetailsFromLocalStorage ('watched', currentPage);
+        } else if (functionCaller ===3) {
+            data = await renderFilmDetailsFromLocalStorage ('queued', currentPage);
+        } else {
+        url = functionCaller === 0 ?
             `${IMDB_URL}/3/trending/movie/day?api_key=${IMDB_API_KEY}&page=${currentPage}` :
             `${IMDB_URL}/3/search/movie?api_key=${IMDB_API_KEY}&query=${query}&language=en-US&page=${currentPage}&include_adult=false`;
-        const data = await fetchMovies(url);
+            data = await fetchMovies(url);
+        }
         renderGallery(data);
     } catch (err) {
         console.log(err);
@@ -112,8 +125,8 @@ searchFormEl.addEventListener('submit', async (e) => {
     await searchMovies();
 });
 
-queued.addEventListener('click', () => renderFilmDetailsFromLocalStorage('queued'));
-watched.addEventListener('click', () => renderFilmDetailsFromLocalStorage('watched'));
+queued.addEventListener('click', () => renderFilmDetailsFromLocalStorage('queued', 1));
+watched.addEventListener('click', () => renderFilmDetailsFromLocalStorage('watched', 1));
 
 async function main() {
   // Initialize the application
@@ -151,33 +164,41 @@ export function findGenresOfMovie(ids) {
   }
 }
 
-function renderFilmDetailsFromLocalStorage(status) {
-  try {
-      const filmDetails = JSON.parse(localStorage.getItem('filmDetails')) || {};
-      const data = Object.values(filmDetails).filter(film => film.status === status);
-      const markup = data.map(({ id, poster_path, title, genres, release_date }) => {
-          const movieGenres = findGenresOfMovie(genres);
-          return `<div class="card" id="${id}">
-                      <img class="card_img" src="https://image.tmdb.org/t/p/w400${poster_path}" alt="${title}" />
-                      <p class="card_title">${title} <br />
-                          <span class="card_text">${genreNames(genres)} | ${release_date}</span>
-                      </p>
-                  </div>`;
-      }).join('');
+function renderFilmDetailsFromLocalStorage(status, pageNumber) {
+    try {
+        status==='watched'?functionCaller=2:functionCaller=3;
+        const filmDetails = JSON.parse(localStorage.getItem('filmDetails')) || {};
+        const data = Object.values(filmDetails).filter(film => film.status === status);
+        totalMovies = data.length;
+        totalPages = Math.ceil(totalMovies / MOVIES_PER_PAGE);
+        if (pageNumber < 1 || pageNumber > totalPages) {
+            console.error('Invalid page number');
+            return;
+        }
 
-      galleryEl.innerHTML = markup;
-      currentPage = 1;
-      if (data.length > 20) {
-        totalPages = Math.ceil(data.length/20);
-      } else {
-        totalPages = 1;
-      }
-      renderPagination();
-      
-  } catch (error) {
-      console.error(error);
-  }
+        const startIndex = (pageNumber - 1) * MOVIES_PER_PAGE;
+        const endIndex = Math.min(startIndex + MOVIES_PER_PAGE, totalMovies);
+        moviesOnPage = data.slice(startIndex, endIndex);
+        console.log(moviesOnPage);
+
+        const markup = moviesOnPage.map(({ id, poster_path, title, genres, release_date }) => {
+            const movieGenres = findGenresOfMovie(genres);
+            return `<div class="card" id="${id}">
+                        <img class="card_img" src="https://image.tmdb.org/t/p/w400${poster_path}" alt="${title}" />
+                        <p class="card_title">${title} <br />
+                            <span class="card_text">${genreNames(genres)} | ${release_date}</span>
+                        </p>
+                    </div>`;
+        }).join('');
+
+        galleryEl.innerHTML = markup;
+        currentPage = pageNumber;
+        renderPagination(1, totalPages);
+    } catch (error) {
+        console.error(error);
+    }
 }
+
 
 function genreNames (genres) {
     let genreNames = genres.map(genre => genre.name);
@@ -201,7 +222,8 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         heroSection.classList.toggle('hidden');
         libraryHeroSection.classList.toggle('hidden');
-        renderFilmDetailsFromLocalStorage('watched');
+        renderFilmDetailsFromLocalStorage('watched', 1);
+        functionCaller = 2;
     });
 });
 
