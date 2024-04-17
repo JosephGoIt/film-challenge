@@ -73,15 +73,6 @@ function renderGallery(data) {
 
 function renderPagination() {
     pagination.innerHTML = '';
-    // for (let i = 1; i <= totalPages; i++) {
-    //     const pageButton = document.createElement('button');
-    //     pageButton.textContent = i;
-    //     pageButton.addEventListener('click', () => {
-    //         currentPage = i;
-    //         loadMore();
-    //     });
-    //     pagination.appendChild(pageButton);
-    // }
     paginationFetch(currentPage, totalPages)
 }
 
@@ -175,6 +166,14 @@ function renderFilmDetailsFromLocalStorage(status) {
       }).join('');
 
       galleryEl.innerHTML = markup;
+      currentPage = 1;
+      if (data.length > 20) {
+        totalPages = Math.ceil(data.length/20);
+      } else {
+        totalPages = 1;
+      }
+      renderPagination();
+      
   } catch (error) {
       console.error(error);
   }
@@ -204,4 +203,18 @@ document.addEventListener('DOMContentLoaded', function () {
         libraryHeroSection.classList.toggle('hidden');
         renderFilmDetailsFromLocalStorage('watched');
     });
+});
+
+pagination.addEventListener('click', (event) => {
+    const target = event.target;
+    if(isNaN(target.textContent) && target.classList.contains('btn-right') && currentPage < totalPages){
+        currentPage = currentPage + 1;
+        loadMore();
+    } else if (isNaN(target.textContent) && target.classList.contains('btn-left') && currentPage > 1) {
+        currentPage = currentPage - 1;
+        loadMore();
+    } else if (!isNaN(target.textContent)) {
+        currentPage = parseInt(target.textContent);
+        loadMore();
+    }
 });
