@@ -35,6 +35,7 @@ const galleryEl = document.querySelector(".gallery_fetch-box");
 const watched = document.querySelector('.watched-btn');
 const queued = document.querySelector('.queue-btn');
 const pagination = document.getElementById('pagination');
+const homeLink = document.querySelector('.home');
 
 let currentPage = 1;
 let totalPages = 0;
@@ -166,7 +167,16 @@ export function findGenresOfMovie(ids) {
 
 function renderFilmDetailsFromLocalStorage(status, pageNumber) {
     try {
-        status==='watched'?functionCaller=2:functionCaller=3;
+        // status==='watched'?functionCaller=2:functionCaller=3;
+        if(status==='watched'){
+            functionCaller=2;
+            watched.classList.add('active');
+            queued.classList.remove('active');
+        } else if (status==='queued') {
+            functionCaller=3;
+            watched.classList.remove('active');
+            queued.classList.add('active');
+        }
         const filmDetails = JSON.parse(localStorage.getItem('filmDetails')) || {};
         const data = Object.values(filmDetails).filter(film => film.status === status);
         totalMovies = data.length;
@@ -183,6 +193,7 @@ function renderFilmDetailsFromLocalStorage(status, pageNumber) {
 
         const markup = moviesOnPage.map(({ id, poster_path, title, genres, release_date }) => {
             const movieGenres = findGenresOfMovie(genres);
+            console.log(release_date);
             return `<div class="card" id="${id}">
                         <img class="card_img" src="https://image.tmdb.org/t/p/w400${poster_path}" alt="${title}" />
                         <p class="card_title">${title} <br />
@@ -218,13 +229,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const heroSection = document.querySelector('.hero');
     const libraryHeroSection = document.querySelector('.library-hero');
 
-    libLink.addEventListener('click', function (event) {
+    function libLinkClickHandler(event) {
         event.preventDefault();
         heroSection.classList.toggle('hidden');
         libraryHeroSection.classList.toggle('hidden');
+        homeLink.classList.remove('current');
+        libLink.classList.add('current');
+        libLink.removeEventListener('click', libLinkClickHandler); // Remove click event listener
+        watched.classList.add('active');
         renderFilmDetailsFromLocalStorage('watched', 1);
         functionCaller = 2;
-    });
+    }
+
+    libLink.addEventListener('click', libLinkClickHandler);
 });
 
 pagination.addEventListener('click', (event) => {

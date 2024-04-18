@@ -91,6 +91,7 @@ function createFilmModalMarkup(data) {
     original_title,
     genres,
     overview,
+    release_date,
   } = data;
   const posterUrl = `https://image.tmdb.org/t/p/w500${poster_path}`;
   return `
@@ -208,8 +209,8 @@ function saveFilmWithStatus(event, status) {
 refs.galleryBox.addEventListener('click', onGalleryBoxClick);
 
 function onAddButtonClicked(status, filmDetails) {
-  const { id, poster_path, title, vote_average, vote_count, popularity, original_title, genres, overview } = filmDetails;
+  const { id, poster_path, title, vote_average, vote_count, popularity, original_title, genres, overview, release_date } = filmDetails;
   const storedFilmDetails = JSON.parse(localStorage.getItem('filmDetails')) || {};
-  storedFilmDetails[id] = { id, poster_path, title, vote_average, vote_count, popularity, original_title, genres, overview, status };
+  storedFilmDetails[id] = { id, poster_path, title, vote_average, vote_count, popularity, original_title, genres, overview, status, release_date };
   localStorage.setItem('filmDetails', JSON.stringify(storedFilmDetails));
 }
