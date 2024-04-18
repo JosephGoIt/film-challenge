@@ -2,26 +2,17 @@ import closeBtnIcon from '../images/icon/symbol-defs.svg';
 
 const BASE_URL = "https://api.themoviedb.org";
 const API_KEY = "9d52264b8376313698d7d20c165a8537";
-const TRENDING_MOVIES_ENDPOINT = "/3/trending/movie/day";
-const IMAGE_PATH_W300 = "https://image.tmdb.org/t/p/w300";
-const IMAGE_PATH_W780 = "https://image.tmdb.org/t/p/w780";
 
 const refs = {
   galleryBox: document.querySelector('.gallery-fetch_container'),
   filmModal: document.querySelector('[data-modal]'),
   body: document.querySelector('body'),
-  // lib: document.querySelector('.lib'),
-  // watchd: document.querySelector('.watched-btn'),
-  // queued: document.querySelector ('.queue-btn')
 };
 
 refs.galleryBox.addEventListener('click', onGalleryBoxClick);
-// refs.galleryBox1.addEventListener('click', onGalleryBoxClick);
 
 async function onGalleryBoxClick(event) {
   event.preventDefault();
-
-  // Check if the filmId is found in local storage
   const filmId = Number(event.target.closest('.card').id);
   let status = '';
   const storedFilmDetails = JSON.parse(localStorage.getItem('filmDetails')) || {};
@@ -31,16 +22,16 @@ async function onGalleryBoxClick(event) {
 
   try {
     const filmDetails = await fetchFilmDetailsById(filmId);
-    console.log(filmDetails); // should be deleted later
     clearFilmModalMarkup();
     renderFilmModal(filmDetails);
 
-    // Enable/disable buttons based on status
     const modalButtonsRefs = {
       closeBtn: document.querySelector('[button-modal-close]'),
       addQueueBtn: document.querySelector('[button-add-queue]'),
       addWatchBtn: document.querySelector('[button-add-watch]'),
     };
+
+    // Enable/disable buttons based on status
     if (status === 'watched') {
       modalButtonsRefs.addWatchBtn.disabled = true;
       modalButtonsRefs.addQueueBtn.disabled = false;
@@ -164,7 +155,6 @@ function clearFilmModalMarkup() {
 
 function renderFilmModal(data) {
   const filmModalMarkup = createFilmModalMarkup(data);
-  console.log(filmModalMarkup); // should be deleted later
   refs.filmModal.insertAdjacentHTML('beforeend', filmModalMarkup);
 }
 
@@ -190,23 +180,6 @@ function enableScroll() {
   refs.body.classList.remove('disable-scroll');
   refs.body.style.paddingRight = 0;
 }
-
-function onAddQueqeBtn(event) {
-  saveFilmWithStatus(event, 'queued');
-}
-
-function onAddWatchBtn(event) {
-  saveFilmWithStatus(event, 'watched');
-}
-
-function saveFilmWithStatus(event, status) {
-  const filmId = Number(event.target.closest('.card').id);
-  const filmDetails = JSON.parse(localStorage.getItem('filmDetails')) || {};
-  filmDetails[filmId] = { ...filmDetails[filmId], status };
-  localStorage.setItem('filmDetails', JSON.stringify(filmDetails));
-}
-
-refs.galleryBox.addEventListener('click', onGalleryBoxClick);
 
 function onAddButtonClicked(status, filmDetails) {
   const { id, poster_path, title, vote_average, vote_count, popularity, original_title, genres, overview, release_date } = filmDetails;
