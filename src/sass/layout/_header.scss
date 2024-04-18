@@ -107,11 +107,11 @@
       }
     }
     @media screen and (min-width: $desktop) {
-      background-image: url(../images/desktop/background_homepage_desctop.jpg);
+      background-image: url(../images/desktop/background_homepage_desktop.jpg);
       @media (min-device-pixel-ratio: 2),
         (min-resolution: 192dpi),
         (min-resolution: 2dppx) {
-        background-image: url(../images/desktop/background_homepage_desctop-2x.jpg);
+        background-image: url(../images/desktop/background_homepage_desktop-2x.jpg);
       }
     }
     @media screen and (min-width: $tablet) {
@@ -181,11 +181,11 @@
       }
     }
     @media screen and (min-width: $desktop) {
-      background-image: url(../images/desktop/background_my-library_desctop.jpg);
+      background-image: url(../images/desktop/background_my-library_desktop.jpg);
       @media (min-device-pixel-ratio: 2),
         (min-resolution: 192dpi),
         (min-resolution: 2dppx) {
-        background-image: url(../images/desktop/background_my-library_desctop-2x.jpg);
+        background-image: url(../images/desktop/background_my-library_desktop-2x.jpg);
       }
     }
     @media screen and (min-width: $tablet) {
