@@ -181,6 +181,14 @@ function enableScroll() {
   refs.body.style.paddingRight = 0;
 }
 
+function handleScroll(action) {
+  if (action === 'disable') {
+    disableScroll();
+  } else if (action === 'enable') {
+    enableScroll();
+  }
+}
+
 function onAddButtonClicked(status, filmDetails) {
   const { id, poster_path, title, vote_average, vote_count, popularity, original_title, genres, overview, release_date } = filmDetails;
   const storedFilmDetails = JSON.parse(localStorage.getItem('filmDetails')) || {};
